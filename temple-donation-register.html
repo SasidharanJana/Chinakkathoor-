@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sree Chinakkathoor Bhagavathi Temple — Donation Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --maroon:#7A1F2B;
+    --maroon-dark:#4E1219;
+    --gold:#C79A3D;
+    --gold-light:#E9CD8E;
+    --cream:#FBF6EA;
+    --cream-dark:#F1E6C9;
+    --ink:#2B1D14;
+    --ink-soft:#5C4A3A;
+    --green:#3F5D3A;
+    --line:#E2D3AE;
+    --danger:#A23B2E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  .app{max-width:1000px;margin:0 auto;padding:0 0 60px;}
+
+  /* ---------- Header ---------- */
+  header.site{
+    background:linear-gradient(180deg,var(--maroon) 0%,var(--maroon-dark) 100%);
+    color:var(--cream);
+    padding:28px 24px 22px;
+    text-align:center;
+    position:relative;
+  }
+  header.site .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold-light);
+    margin-bottom:6px;
+  }
+  header.site h1{
+    font-family:'Yatra One',cursive;
+    font-weight:400;
+    font-size:clamp(26px,4vw,38px);
+    margin:0 0 6px;
+    letter-spacing:.02em;
+  }
+  header.site .addr{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:16px;
+    color:var(--cream-dark);
+    opacity:.9;
+  }
+  .spire-divider{
+    display:flex;justify-content:center;gap:4px;margin-top:14px;
+  }
+  .spire-divider span{
+    width:0;height:0;
+    border-left:7px solid transparent;
+    border-right:7px solid transparent;
+    border-bottom:12px solid var(--gold);
+    opacity:.85;
+  }
+  .spire-divider span:nth-child(3n+1){opacity:.5;transform:scale(.8);}
+
+  /* ---------- Nav ---------- */
+  nav.tabs{
+    display:flex;
+    gap:2px;
+    background:var(--cream-dark);
+    border-bottom:2px solid var(--gold);
+  }
+  nav.tabs button{
+    flex:1;
+    padding:14px 10px;
+    background:transparent;
+    border:none;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    letter-spacing:.03em;
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    transition:all .15s ease;
+  }
+  nav.tabs button:hover{color:var(--maroon);}
+  nav.tabs button.active{
+    color:var(--maroon);
+    border-bottom-color:var(--maroon);
+    background:var(--cream);
+  }
+
+  main{padding:26px 20px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(74,30,20,.06);
+  }
+  .card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--maroon-dark);
+    margin:0 0 18px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+
+  /* ---------- Form ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .field.full{grid-column:1/-1;}
+  label{
+    font-size:12.5px;font-weight:600;color:var(--ink-soft);
+    letter-spacing:.02em;
+  }
+  input,select,textarea{
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:10px 12px;
+    border:1.5px solid var(--line);
+    border-radius:7px;
+    background:var(--cream);
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--maroon);}
+  input[type=number]{font-family:'IBM Plex Mono',monospace;}
+  .amount-words{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:14px;
+    color:var(--green);
+    min-height:18px;
+  }
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    padding:12px 22px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    letter-spacing:.02em;
+    transition:transform .1s, box-shadow .15s;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--maroon);color:#fff;}
+  .btn-primary:hover{background:var(--maroon-dark);}
+  .btn-gold{background:var(--gold);color:var(--maroon-dark);}
+  .btn-gold:hover{background:var(--gold-light);}
+  .btn-ghost{background:transparent;color:var(--maroon);border:1.5px solid var(--maroon);}
+  .btn-ghost:hover{background:var(--cream-dark);}
+  .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* ---------- Ledger ---------- */
+  .ledger-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .ledger-controls input{flex:1;min-width:160px;}
+  .stats{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+  .stat{
+    background:var(--cream-dark);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 18px;
+    min-width:140px;
+  }
+  .stat .n{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--maroon-dark);}
+  .stat .l{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{
+    text-align:left;padding:10px 8px;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-soft);border-bottom:2px solid var(--gold);
+  }
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
+  td.amt{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--maroon-dark);}
+  tr:hover td{background:var(--cream);}
+  .pill{
+    display:inline-block;padding:2px 9px;border-radius:20px;
+    font-size:11px;font-weight:600;
+    background:var(--cream-dark);color:var(--green);
+  }
+  .link-btn{
+    background:none;border:none;color:var(--maroon);font-weight:600;
+    font-size:13px;cursor:pointer;text-decoration:underline;padding:0;
+  }
+  .empty{text-align:center;padding:40px 20px;color:var(--ink-soft);}
+  .empty .big{font-family:'Yatra One',cursive;font-size:20px;color:var(--maroon);margin-bottom:6px;}
+
+  /* ---------- Receipt Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(43,29,20,.55);
+    display:none;align-items:center;justify-content:center;
+    padding:20px;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .receipt-wrap{
+    background:#fff;border-radius:10px;max-width:560px;width:100%;
+    max-height:92vh;overflow-y:auto;
+  }
+  .receipt-print{
+    padding:32px 30px;
+    border:2px solid var(--gold);
+    margin:14px;
+    border-radius:6px;
+    background:
+      repeating-linear-gradient(135deg, rgba(199,154,61,.035) 0 2px, transparent 2px 14px);
+  }
+  .receipt-head{text-align:center;border-bottom:2px dashed var(--gold);padding-bottom:14px;margin-bottom:16px;}
+  .receipt-head .om{font-family:'Yatra One',cursive;color:var(--maroon);font-size:15px;letter-spacing:.15em;}
+  .receipt-head h3{
+    font-family:'Yatra One',cursive;font-weight:400;
+    color:var(--maroon-dark);font-size:21px;margin:6px 0 4px;
+  }
+  .receipt-head .a2{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--ink-soft);}
+  .receipt-meta{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-bottom:16px;color:var(--ink-soft);}
+  .receipt-meta b{color:var(--maroon-dark);}
+  .receipt-body p{font-size:14.5px;line-height:1.9;margin:0 0 10px;}
+  .receipt-body .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+  .receipt-body .val{font-weight:600;color:var(--ink);}
+  .receipt-amount-box{
+    background:var(--cream-dark);border:1px solid var(--gold);border-radius:8px;
+    padding:12px 16px;margin:14px 0;text-align:center;
+  }
+  .receipt-amount-box .figure{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--maroon-dark);}
+  .receipt-amount-box .words{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--green);margin-top:4px;}
+  .receipt-foot{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-top:30px;padding-top:14px;border-top:1px dashed var(--gold);
+  }
+  .sign-line{width:160px;border-top:1px solid var(--ink-soft);text-align:center;font-size:11px;color:var(--ink-soft);padding-top:4px;}
+  .receipt-actions{padding:14px 22px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--line);}
+  .close-x{
+    position:absolute;top:10px;right:14px;background:none;border:none;
+    font-size:22px;color:var(--ink-soft);cursor:pointer;line-height:1;
+  }
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--maroon-dark);color:#fff;padding:10px 20px;border-radius:8px;
+    font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;
+  }
+  .toast.show{opacity:1;}
+
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+
+  /* ---------- Print ---------- */
+  @media print{
+    body *{visibility:hidden;}
+    .receipt-print,.receipt-print *{visibility:visible;}
+    .receipt-print{
+      position:absolute;top:0;left:0;width:100%;margin:0;border:none;
+      background:none;
+    }
+    .overlay{background:none;position:static;padding:0;}
+    .receipt-wrap{max-height:none;box-shadow:none;}
+    .receipt-actions,.close-x{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="site">
+    <div class="eyebrow">Donation Register &amp; Receipt</div>
+    <h1>Sree Chinakkathoor Bhagavathi Temple</h1>
+    <div class="addr">Palappuram, Ottapalam, Kerala 679103</div>
+    <div class="spire-divider">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="new">＋ New Donation</button>
+    <button data-tab="ledger">Ledger</button>
+    <button data-tab="reports">Reports</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+
+  <main>
+    <!-- NEW DONATION -->
+    <section id="tab-new">
+      <div class="card">
+        <h2>Record a Donation</h2>
+        <form id="donationForm">
+          <div class="grid">
+            <div class="field">
+              <label for="donorName">Donor Name *</label>
+              <input type="text" id="donorName" required placeholder="Full name">
+            </div>
+            <div class="field">
+              <label for="donorPhone">Phone Number</label>
+              <input type="tel" id="donorPhone" placeholder="10-digit mobile number">
+            </div>
+          </div>
+          <div class="field full">
+            <label for="donorAddress">Address</label>
+            <input type="text" id="donorAddress" placeholder="City / District (optional)">
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="amount">Amount (₹) *</label>
+              <input type="number" id="amount" required min="1" step="1" placeholder="0">
+              <div class="amount-words" id="amountWords"></div>
+            </div>
+            <div class="field">
+              <label for="paymentMode">Payment Mode *</label>
+              <select id="paymentMode" required>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="purpose">Purpose *</label>
+              <select id="purpose" required>
+                <option value="General Donation">General Donation</option>
+                <option value="Vazhipadu">Vazhipadu</option>
+                <option value="Annadanam">Annadanam</option>
+                <option value="Festival Offering">Festival Offering</option>
+                <option value="Temple Renovation">Temple Renovation / Construction</option>
+                <option value="Other">Other (specify)</option>
+              </select>
+            </div>
+            <div class="field" id="otherPurposeWrap" style="display:none;">
+              <label for="otherPurpose">Specify Purpose</label>
+              <input type="text" id="otherPurpose" placeholder="e.g. Deepam sponsorship">
+            </div>
+            <div class="field">
+              <label for="donationDate">Date *</label>
+              <input type="date" id="donationDate" required>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Save &amp; Generate Receipt</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- LEDGER -->
+    <section id="tab-ledger" style="display:none;">
+      <div class="card">
+        <h2>Donation Ledger</h2>
+        <div class="stats" id="stats"></div>
+        <div class="ledger-controls">
+          <input type="text" id="searchBox" placeholder="Search by name or receipt no...">
+          <input type="date" id="filterDate" title="Filter by date">
+          <button class="btn btn-ghost" id="clearFilters">Clear</button>
+          <button class="btn btn-gold" id="exportExcelBtn">⬇ Export to Excel</button>
+        </div>
+        <div id="ledgerTableWrap"></div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="tab-reports" style="display:none;">
+      <div class="card">
+        <h2>Donation Reports</h2>
+        <div class="ledger-controls">
+          <select id="reportYear"></select>
+        </div>
+        <div id="reportContent"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="tab-settings" style="display:none;">
+      <div class="card">
+        <h2>Office Settings</h2>
+        <form id="settingsForm">
+          <div class="grid">
+            <div class="field">
+              <label for="secretaryName">Signatory Name</label>
+              <input type="text" id="secretaryName" placeholder="e.g. Raman">
+            </div>
+            <div class="field">
+              <label for="secretaryDesignation">Designation</label>
+              <input type="text" id="secretaryDesignation" placeholder="e.g. Secretary">
+            </div>
+          </div>
+          <div class="field full">
+            <label for="secretaryPhone">Contact Number</label>
+            <input type="tel" id="secretaryPhone" placeholder="+91...">
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="panNumber">Temple PAN</label>
+              <input type="text" id="panNumber" placeholder="e.g. AAATC1234A">
+            </div>
+            <div class="field">
+              <label for="reg80g">80G Registration No.</label>
+              <input type="text" id="reg80g" placeholder="e.g. AAATC1234A/80G/2024">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="overlay" id="receiptOverlay">
+  <div class="receipt-wrap">
+    <button class="close-x" id="closeReceipt">&times;</button>
+    <div class="receipt-print" id="receiptPrintArea"></div>
+    <div class="receipt-actions">
+      <button class="btn btn-ghost" id="closeReceiptBtn">Close</button>
+      <button class="btn btn-gold" id="downloadPdfBtn">⬇ Download PDF</button>
+      <button class="btn btn-primary" id="printReceiptBtn">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TEMPLE_NAME = "Sree Chinakkathoor Bhagavathi Temple";
+const TEMPLE_ADDR = "Palappuram, Ottapalam, Kerala 679103";
+const RECEIPT_PREFIX = "SCBT";
+const STORAGE_KEY = "donations-ledger";
+const COUNTER_KEY = "receipt-counter";
+const SETTINGS_KEY = "temple-settings";
+
+let donations = [];
+let counter = { year: new Date().getFullYear(), seq: 0 };
+let settings = { secretaryName: "Raman", secretaryDesignation: "Secretary", secretaryPhone: "+919048243196", panNumber: "", reg80g: "" };
+
+// ---------- Helpers ----------
+function pad(n, len){ return String(n).padStart(len,'0'); }
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1,2)+'-'+pad(d.getDate(),2);
+}
+function formatDateDisplay(iso){
+  const [y,m,d] = iso.split('-');
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${d} ${months[parseInt(m,10)-1]} ${y}`;
+}
+function inr(n){
+  return '₹' + Number(n).toLocaleString('en-IN');
+}
+
+// Indian numbering amount-in-words
+const ONES = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+const TENS = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+
+function twoDigits(n){
+  if(n < 20) return ONES[n];
+  return TENS[Math.floor(n/10)] + (n%10 ? " " + ONES[n%10] : "");
+}
+function threeDigits(n){
+  if(n < 100) return twoDigits(n);
+  return ONES[Math.floor(n/100)] + " Hundred" + (n%100 ? " " + twoDigits(n%100) : "");
+}
+function amountToWords(num){
+  num = Math.floor(Number(num) || 0);
+  if(num === 0) return "Zero Rupees Only";
+  let parts = [];
+  const crore = Math.floor(num / 10000000); num %= 10000000;
+  const lakh = Math.floor(num / 100000); num %= 100000;
+  const thousand = Math.floor(num / 1000); num %= 1000;
+  const rest = num;
+  if(crore) parts.push(threeDigits(crore) + " Crore");
+  if(lakh) parts.push(threeDigits(lakh) + " Lakh");
+  if(thousand) parts.push(threeDigits(thousand) + " Thousand");
+  if(rest) parts.push(threeDigits(rest));
+  return parts.join(" ") + " Rupees Only";
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ---------- Storage ----------
+async function loadData(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, true);
+    donations = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){ donations = []; }
+  try{
+    const res = await window.storage.get(COUNTER_KEY, true);
+    counter = res && res.value ? JSON.parse(res.value) : { year: new Date().getFullYear(), seq: 0 };
+  }catch(e){ counter = { year: new Date().getFullYear(), seq: 0 }; }
+  try{
+    const res = await window.storage.get(SETTINGS_KEY, true);
+    if(res && res.value){
+      settings = JSON.parse(res.value);
+    } else {
+      // first run: seed default settings
+      await window.storage.set(SETTINGS_KEY, JSON.stringify(settings), true);
+    }
+  }catch(e){ /* keep defaults */ }
+}
+async function saveSettings(){
+  try{
+    await window.storage.set(SETTINGS_KEY, JSON.stringify(settings), true);
+  }catch(e){ showToast("Could not save settings — please retry."); }
+}
+async function saveDonations(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(donations), true);
+  }catch(e){ showToast("Could not save — please retry."); }
+}
+async function saveCounter(){
+  try{
+    await window.storage.set(COUNTER_KEY, JSON.stringify(counter), true);
+  }catch(e){ /* non-fatal */ }
+}
+
+async function nextReceiptNo(){
+  const yr = new Date().getFullYear();
+  if(counter.year !== yr){ counter.year = yr; counter.seq = 0; }
+  counter.seq += 1;
+  await saveCounter();
+  return `${RECEIPT_PREFIX}/${yr}/${pad(counter.seq,4)}`;
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-new').style.display = btn.dataset.tab==='new' ? '' : 'none';
+    document.getElementById('tab-ledger').style.display = btn.dataset.tab==='ledger' ? '' : 'none';
+    document.getElementById('tab-reports').style.display = btn.dataset.tab==='reports' ? '' : 'none';
+    document.getElementById('tab-settings').style.display = btn.dataset.tab==='settings' ? '' : 'none';
+    if(btn.dataset.tab==='ledger') renderLedger();
+    if(btn.dataset.tab==='reports') renderReports();
+    if(btn.dataset.tab==='settings') populateSettingsForm();
+  });
+});
+
+// ---------- Form ----------
+const purposeSelect = document.getElementById('purpose');
+const otherWrap = document.getElementById('otherPurposeWrap');
+purposeSelect.addEventListener('change', ()=>{
+  otherWrap.style.display = purposeSelect.value === 'Other' ? '' : 'none';
+});
+
+const amountInput = document.getElementById('amount');
+amountInput.addEventListener('input', ()=>{
+  const v = amountInput.value;
+  document.getElementById('amountWords').textContent = v ? amountToWords(v) : '';
+});
+
+document.getElementById('donationDate').value = todayStr();
+
+function populateSettingsForm(){
+  document.getElementById('secretaryName').value = settings.secretaryName || '';
+  document.getElementById('secretaryDesignation').value = settings.secretaryDesignation || '';
+  document.getElementById('secretaryPhone').value = settings.secretaryPhone || '';
+  document.getElementById('panNumber').value = settings.panNumber || '';
+  document.getElementById('reg80g').value = settings.reg80g || '';
+}
+document.getElementById('settingsForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  settings.secretaryName = document.getElementById('secretaryName').value.trim();
+  settings.secretaryDesignation = document.getElementById('secretaryDesignation').value.trim();
+  settings.secretaryPhone = document.getElementById('secretaryPhone').value.trim();
+  settings.panNumber = document.getElementById('panNumber').value.trim();
+  settings.reg80g = document.getElementById('reg80g').value.trim();
+  await saveSettings();
+  showToast('Settings saved');
+});
+
+document.getElementById('donationForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const submitBtn = e.target.querySelector('button[type=submit]');
+  submitBtn.disabled = true;
+
+  const purposeVal = purposeSelect.value === 'Other'
+    ? (document.getElementById('otherPurpose').value.trim() || 'Other')
+    : purposeSelect.value;
+
+  const record = {
+    receiptNo: await nextReceiptNo(),
+    donorName: document.getElementById('donorName').value.trim(),
+    donorPhone: document.getElementById('donorPhone').value.trim(),
+    donorAddress: document.getElementById('donorAddress').value.trim(),
+    amount: Number(amountInput.value),
+    paymentMode: document.getElementById('paymentMode').value,
+    purpose: purposeVal,
+    date: document.getElementById('donationDate').value,
+    createdAt: new Date().toISOString()
+  };
+
+  donations.unshift(record);
+  await saveDonations();
+  submitBtn.disabled = false;
+  e.target.reset();
+  document.getElementById('donationDate').value = todayStr();
+  document.getElementById('amountWords').textContent = '';
+  otherWrap.style.display = 'none';
+
+  showReceipt(record);
+  showToast('Donation saved — receipt ' + record.receiptNo);
+});
+
+// ---------- Receipt ----------
+function receiptHTML(r){
+  return `
+    <div class="receipt-head">
+      <div class="om">ॐ</div>
+      <h3>${TEMPLE_NAME}</h3>
+      <div class="a2">${TEMPLE_ADDR}</div>
+    </div>
+    <div class="receipt-meta">
+      <span>Receipt No: <b>${r.receiptNo}</b></span>
+      <span>Date: <b>${formatDateDisplay(r.date)}</b></span>
+    </div>
+    <div class="receipt-body">
+      <p><span class="label">Received with thanks from</span><br><span class="val">${r.donorName}</span></p>
+      ${r.donorPhone ? `<p><span class="label">Phone</span><br><span class="val">${r.donorPhone}</span></p>` : ''}
+      ${r.donorAddress ? `<p><span class="label">Address</span><br><span class="val">${r.donorAddress}</span></p>` : ''}
+      <div class="receipt-amount-box">
+        <div class="figure">${inr(r.amount)}</div>
+        <div class="words">${amountToWords(r.amount)}</div>
+      </div>
+      <p><span class="label">Towards</span><br><span class="val">${r.purpose}</span></p>
+      <p><span class="label">Payment Mode</span><br><span class="val">${r.paymentMode}</span></p>
+      ${settings.reg80g ? `
+      <div style="margin-top:14px;padding:10px 12px;border:1px dashed var(--green);border-radius:6px;font-size:11.5px;color:var(--green);line-height:1.6;">
+        Eligible for tax deduction under <b>Section 80G</b> of the Income Tax Act, 1961.
+        ${settings.reg80g ? `<br>80G Reg. No: <b>${settings.reg80g}</b>` : ''}
+        ${settings.panNumber ? `&nbsp;&nbsp;|&nbsp;&nbsp;PAN: <b>${settings.panNumber}</b>` : ''}
+      </div>` : ''}
+    </div>
+    <div class="receipt-foot">
+      <div style="font-size:11px;color:var(--ink-soft);">This receipt is issued by the temple office.${settings.secretaryPhone ? '<br>Contact: '+settings.secretaryPhone : ''}</div>
+      <div class="sign-line">${settings.secretaryName || 'Authorised Signatory'}${settings.secretaryDesignation ? '<br>'+settings.secretaryDesignation : ''}</div>
+    </div>
+  `;
+}
+let currentReceipt = null;
+function showReceipt(r){
+  currentReceipt = r;
+  document.getElementById('receiptPrintArea').innerHTML = receiptHTML(r);
+  document.getElementById('receiptOverlay').classList.add('show');
+}
+document.getElementById('downloadPdfBtn').addEventListener('click', ()=>{
+  if(!currentReceipt || !window.jspdf){ showToast('PDF library not ready — try again in a moment.'); return; }
+  const { jsPDF } = window.jspdf;
+  const el = document.getElementById('receiptPrintArea');
+  const doc = new jsPDF({ unit: 'pt', format: 'a5' });
+  doc.html(el, {
+    x: 12, y: 12,
+    width: 370,
+    windowWidth: el.scrollWidth,
+    callback: function(doc){
+      doc.save('Receipt-' + currentReceipt.receiptNo.replace(/\//g,'-') + '.pdf');
+    }
+  });
+});
+document.getElementById('closeReceipt').addEventListener('click', ()=>{
+  document.getElementById('receiptOverlay').classList.remove('show');
+});
+document.getElementById('closeReceiptBtn').addEventListener('click', ()=>{
+  document.getElementById('receiptOverlay').classList.remove('show');
+});
+document.getElementById('printReceiptBtn').addEventListener('click', ()=>{
+  window.print();
+});
+
+// ---------- Ledger ----------
+function renderLedger(){
+  const search = document.getElementById('searchBox').value.trim().toLowerCase();
+  const filterDate = document.getElementById('filterDate').value;
+
+  let rows = donations.filter(r=>{
+    const matchesSearch = !search ||
+      r.donorName.toLowerCase().includes(search) ||
+      r.receiptNo.toLowerCase().includes(search);
+    const matchesDate = !filterDate || r.date === filterDate;
+    return matchesSearch && matchesDate;
+  });
+
+  const total = rows.reduce((s,r)=>s+Number(r.amount||0), 0);
+  const todayTotal = donations.filter(r=>r.date===todayStr()).reduce((s,r)=>s+Number(r.amount||0),0);
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="n">${inr(todayTotal)}</div><div class="l">Today's Collection</div></div>
+    <div class="stat"><div class="n">${rows.length}</div><div class="l">Records Shown</div></div>
+    <div class="stat"><div class="n">${inr(total)}</div><div class="l">Total (Filtered)</div></div>
+  `;
+
+  const wrap = document.getElementById('ledgerTableWrap');
+  if(rows.length === 0){
+    wrap.innerHTML = `<div class="empty"><div class="big">No donations found</div>Try clearing filters, or record a new donation.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Receipt No</th><th>Date</th><th>Donor</th><th>Purpose</th><th>Mode</th><th>Amount</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r,idx)=>`
+          <tr>
+            <td>${r.receiptNo}</td>
+            <td>${formatDateDisplay(r.date)}</td>
+            <td>${r.donorName}</td>
+            <td>${r.purpose}</td>
+            <td><span class="pill">${r.paymentMode}</span></td>
+            <td class="amt">${inr(r.amount)}</td>
+            <td><button class="link-btn" data-receipt="${r.receiptNo}">Reprint</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  wrap.querySelectorAll('[data-receipt]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const rec = donations.find(d=>d.receiptNo === btn.dataset.receipt);
+      if(rec) showReceipt(rec);
+    });
+  });
+}
+
+document.getElementById('searchBox').addEventListener('input', renderLedger);
+document.getElementById('filterDate').addEventListener('change', renderLedger);
+document.getElementById('clearFilters').addEventListener('click', ()=>{
+  document.getElementById('searchBox').value = '';
+  document.getElementById('filterDate').value = '';
+  renderLedger();
+});
+
+// ---------- Reports ----------
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function populateReportYears(){
+  const sel = document.getElementById('reportYear');
+  const years = Array.from(new Set(donations.map(d => d.date.slice(0,4))));
+  const thisYear = String(new Date().getFullYear());
+  if(!years.includes(thisYear)) years.push(thisYear);
+  years.sort((a,b)=>b.localeCompare(a));
+  sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+  sel.value = thisYear;
+}
+
+function renderReports(){
+  populateReportYears();
+  renderReportForYear();
+}
+
+function renderReportForYear(){
+  const year = document.getElementById('reportYear').value;
+  const yearRecords = donations.filter(d => d.date.slice(0,4) === year);
+
+  // Month-wise
+  const monthly = Array(12).fill(0).map(()=>({count:0, total:0}));
+  yearRecords.forEach(r=>{
+    const m = parseInt(r.date.slice(5,7),10) - 1;
+    monthly[m].count += 1;
+    monthly[m].total += Number(r.amount||0);
+  });
+  const yearTotal = monthly.reduce((s,m)=>s+m.total,0);
+  const yearCount = monthly.reduce((s,m)=>s+m.count,0);
+
+  // Purpose-wise
+  const byPurpose = {};
+  yearRecords.forEach(r=>{
+    byPurpose[r.purpose] = byPurpose[r.purpose] || {count:0,total:0};
+    byPurpose[r.purpose].count += 1;
+    byPurpose[r.purpose].total += Number(r.amount||0);
+  });
+
+  const monthRows = monthly.map((m,i)=>`
+    <tr>
+      <td>${MONTH_NAMES[i]}</td>
+      <td>${m.count}</td>
+      <td class="amt">${inr(m.total)}</td>
+    </tr>
+  `).join('');
+
+  const purposeRows = Object.entries(byPurpose).sort((a,b)=>b[1].total-a[1].total).map(([p,v])=>`
+    <tr>
+      <td>${p}</td>
+      <td>${v.count}</td>
+      <td class="amt">${inr(v.total)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('reportContent').innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="n">${inr(yearTotal)}</div><div class="l">Total for ${year}</div></div>
+      <div class="stat"><div class="n">${yearCount}</div><div class="l">Donations for ${year}</div></div>
+      <div class="stat"><div class="n">${yearCount ? inr(Math.round(yearTotal/yearCount)) : inr(0)}</div><div class="l">Average Donation</div></div>
+    </div>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:18px 0 10px;">Month-wise</h3>
+    <table>
+      <thead><tr><th>Month</th><th>Donations</th><th>Total</th></tr></thead>
+      <tbody>${monthRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
+    </table>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:22px 0 10px;">By Purpose</h3>
+    <table>
+      <thead><tr><th>Purpose</th><th>Donations</th><th>Total</th></tr></thead>
+      <tbody>${purposeRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
+    </table>
+  `;
+}
+document.getElementById('reportYear').addEventListener('change', renderReportForYear);
+
+// ---------- Excel Export ----------
+document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
+  if(!window.XLSX){ showToast('Excel library not ready — try again in a moment.'); return; }
+  const search = document.getElementById('searchBox').value.trim().toLowerCase();
+  const filterDate = document.getElementById('filterDate').value;
+  let rows = donations.filter(r=>{
+    const matchesSearch = !search || r.donorName.toLowerCase().includes(search) || r.receiptNo.toLowerCase().includes(search);
+    const matchesDate = !filterDate || r.date === filterDate;
+    return matchesSearch && matchesDate;
+  });
+  if(rows.length === 0){ showToast('No records to export.'); return; }
+
+  const sheetData = rows.map(r => ({
+    "Receipt No": r.receiptNo,
+    "Date": r.date,
+    "Donor Name": r.donorName,
+    "Phone": r.donorPhone || '',
+    "Address": r.donorAddress || '',
+    "Purpose": r.purpose,
+    "Payment Mode": r.paymentMode,
+    "Amount (INR)": r.amount
+  }));
+  const totalRow = { "Receipt No": '', "Date": '', "Donor Name": '', "Phone": '', "Address": '', "Purpose": '', "Payment Mode": 'TOTAL', "Amount (INR)": rows.reduce((s,r)=>s+Number(r.amount||0),0) };
+  sheetData.push(totalRow);
+
+  const ws = XLSX.utils.json_to_sheet(sheetData);
+  ws['!cols'] = [{wch:16},{wch:12},{wch:22},{wch:14},{wch:22},{wch:20},{wch:12},{wch:14}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Donations");
+  const stamp = todayStr();
+  XLSX.writeFile(wb, `Temple-Donations-${stamp}.xlsx`);
+});
+
+// ---------- Init ----------
+(async function init(){
+  await loadData();
+  renderLedger();
+})();
+</script>
+</body>
+</html>
