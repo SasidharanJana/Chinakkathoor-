@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Sree Chinakkathoor Bhagavathi Temple — Donation Register</title>
+<meta name="description" content="Donation register and receipt app for Sree Chinakkathoor Bhagavathi Temple, Palappuram">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#7A1F2B">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Temple Donations">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -263,6 +272,51 @@
 
   @media(max-width:640px){.grid{grid-template-columns:1fr;}}
 
+  /* ---------- Install button ---------- */
+  .install-btn{
+    margin-top:14px;
+    background:var(--gold);
+    color:var(--maroon-dark);
+    border:none;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    padding:9px 20px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .install-btn:hover{background:var(--gold-light);}
+  .ios-hint{
+    margin-top:12px;
+    font-size:12px;
+    color:var(--cream-dark);
+    background:rgba(0,0,0,.18);
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:20px;
+  }
+
+  /* ---------- Mobile responsiveness ---------- */
+  .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  @media(max-width:640px){
+    body{font-size:15px;}
+    main{padding:16px 12px;}
+    .card{padding:16px;border-radius:8px;}
+    nav.tabs{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
+    nav.tabs button{flex:0 0 auto; padding:12px 14px; font-size:12.5px; white-space:nowrap;}
+    table{font-size:13px;}
+    th,td{padding:8px 6px;}
+    .receipt-actions{flex-wrap:wrap;}
+    .receipt-actions button{flex:1 1 auto; min-width:100px;}
+    .btn-row{flex-wrap:wrap;}
+    .btn-row .btn{width:100%;}
+    .stats{gap:8px;}
+    .stat{flex:1 1 auto; min-width:100px; padding:10px 12px;}
+    .receipt-print{margin:8px; padding:20px 16px;}
+    .receipt-foot{flex-direction:column; align-items:flex-start; gap:14px;}
+    .sign-line{align-self:flex-end;}
+  }
+
   /* ---------- Print ---------- */
   @media print{
     body *{visibility:hidden;}
@@ -286,6 +340,8 @@
     <div class="spire-divider">
       <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
+    <button id="installBtn" class="install-btn" style="display:none;">⬇ Install App</button>
+    <div id="iosInstallHint" class="ios-hint" style="display:none;">Tap <b>Share</b> then <b>"Add to Home Screen"</b> to install</div>
   </header>
 
   <nav class="tabs">
@@ -501,39 +557,48 @@ function showToast(msg){
 }
 
 // ---------- Storage ----------
+// Uses localStorage: works on any real website (GitHub Pages, any host), no backend needed.
+// Note: data is stored per-device/per-browser, not shared across multiple phones/computers.
+function storageGet(key){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function storageSet(key, value){
+  try{
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  }catch(e){ return false; }
+}
+
 async function loadData(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, true);
-    donations = res && res.value ? JSON.parse(res.value) : [];
-  }catch(e){ donations = []; }
-  try{
-    const res = await window.storage.get(COUNTER_KEY, true);
-    counter = res && res.value ? JSON.parse(res.value) : { year: new Date().getFullYear(), seq: 0 };
-  }catch(e){ counter = { year: new Date().getFullYear(), seq: 0 }; }
-  try{
-    const res = await window.storage.get(SETTINGS_KEY, true);
-    if(res && res.value){
-      settings = JSON.parse(res.value);
-    } else {
-      // first run: seed default settings
-      await window.storage.set(SETTINGS_KEY, JSON.stringify(settings), true);
-    }
-  }catch(e){ /* keep defaults */ }
+  const d = storageGet(STORAGE_KEY);
+  donations = Array.isArray(d) ? d : [];
+
+  const c = storageGet(COUNTER_KEY);
+  counter = c && typeof c.seq === 'number' ? c : { year: new Date().getFullYear(), seq: 0 };
+
+  const s = storageGet(SETTINGS_KEY);
+  if(s){
+    settings = s;
+  } else {
+    // first run: seed default settings
+    storageSet(SETTINGS_KEY, settings);
+  }
 }
 async function saveSettings(){
-  try{
-    await window.storage.set(SETTINGS_KEY, JSON.stringify(settings), true);
-  }catch(e){ showToast("Could not save settings — please retry."); }
+  if(!storageSet(SETTINGS_KEY, settings)){
+    showToast("Could not save settings — your browser storage may be full or disabled.");
+  }
 }
 async function saveDonations(){
-  try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(donations), true);
-  }catch(e){ showToast("Could not save — please retry."); }
+  if(!storageSet(STORAGE_KEY, donations)){
+    showToast("Could not save — your browser storage may be full or disabled.");
+  }
 }
 async function saveCounter(){
-  try{
-    await window.storage.set(COUNTER_KEY, JSON.stringify(counter), true);
-  }catch(e){ /* non-fatal */ }
+  storageSet(COUNTER_KEY, counter);
 }
 
 async function nextReceiptNo(){
@@ -739,6 +804,7 @@ function renderLedger(){
   }
 
   wrap.innerHTML = `
+    <div class="table-scroll">
     <table>
       <thead>
         <tr>
@@ -759,6 +825,7 @@ function renderLedger(){
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 
   wrap.querySelectorAll('[data-receipt]').forEach(btn=>{
@@ -840,15 +907,19 @@ function renderReportForYear(){
       <div class="stat"><div class="n">${yearCount ? inr(Math.round(yearTotal/yearCount)) : inr(0)}</div><div class="l">Average Donation</div></div>
     </div>
     <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:18px 0 10px;">Month-wise</h3>
+    <div class="table-scroll">
     <table>
       <thead><tr><th>Month</th><th>Donations</th><th>Total</th></tr></thead>
       <tbody>${monthRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
     </table>
+    </div>
     <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:22px 0 10px;">By Purpose</h3>
+    <div class="table-scroll">
     <table>
       <thead><tr><th>Purpose</th><th>Donations</th><th>Total</th></tr></thead>
       <tbody>${purposeRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
     </table>
+    </div>
   `;
 }
 document.getElementById('reportYear').addEventListener('change', renderReportForYear);
@@ -885,6 +956,45 @@ document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
   const stamp = todayStr();
   XLSX.writeFile(wb, `Temple-Donations-${stamp}.xlsx`);
 });
+
+// ---------- PWA: Install prompt ----------
+let deferredInstallPrompt = null;
+const installBtn = document.getElementById('installBtn');
+const iosHint = document.getElementById('iosInstallHint');
+
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+
+installBtn.addEventListener('click', async ()=>{
+  if(!deferredInstallPrompt) return;
+  installBtn.style.display = 'none';
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+});
+
+window.addEventListener('appinstalled', ()=>{
+  installBtn.style.display = 'none';
+  iosHint.style.display = 'none';
+});
+
+(function checkIOS(){
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if(isIOS && !isStandalone){
+    iosHint.style.display = 'inline-block';
+  }
+})();
+
+// ---------- PWA: Service worker (enables install + offline) ----------
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{ /* non-fatal */ });
+  });
+}
 
 // ---------- Init ----------
 (async function init(){
