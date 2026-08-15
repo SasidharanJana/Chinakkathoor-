@@ -753,9 +753,12 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async ()=>{
     });
     const imgData = canvas.toDataURL('image/png');
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'pt', format: 'a5' });
-    const pageWidth = pdf.internal.pageSize.getWidth();
+    // Build the page to exactly fit the receipt's own aspect ratio, so nothing
+    // is ever cut off — a fixed page size (e.g. A5) can be shorter than the
+    // actual receipt height once donor details / 80G notes are included.
+    const pageWidth = 420; // pt, ~A5 width
     const pageHeight = (canvas.height * pageWidth) / canvas.width;
+    const pdf = new jsPDF({ unit: 'pt', format: [pageWidth, pageHeight] });
     pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
     pdf.save('Receipt-' + currentReceipt.receiptNo.replace(/\//g,'-') + '.pdf');
   }catch(err){
