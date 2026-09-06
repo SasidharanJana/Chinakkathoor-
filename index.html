@@ -223,6 +223,7 @@
   }
   .overlay.show{display:flex;}
   .receipt-wrap{
+    position:relative;
     background:#fff;border-radius:10px;max-width:560px;width:100%;
     max-height:92vh;overflow-y:auto;
   }
@@ -726,6 +727,9 @@ function todayStr(){
 }
 function formatDateDisplay(iso){
   const [y,m,d] = iso.split('-');
+  if(lang === 'ml'){
+    return `${d} ${MONTH_NAMES_I18N.ml[parseInt(m,10)-1]} ${y}`;
+  }
   const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   return `${d} ${months[parseInt(m,10)-1]} ${y}`;
 }
@@ -759,6 +763,37 @@ function amountToWords(num){
   if(thousand) parts.push(threeDigits(thousand) + " Thousand");
   if(rest) parts.push(threeDigits(rest));
   return parts.join(" ") + " Rupees Only";
+}
+
+// Malayalam amount-in-words
+const ONES_ML = ["","ഒന്ന്","രണ്ട്","മൂന്ന്","നാല്","അഞ്ച്","ആറ്","ഏഴ്","എട്ട്","ഒൻപത്","പത്ത്",
+  "പതിനൊന്ന്","പന്ത്രണ്ട്","പതിമൂന്ന്","പതിനാല്","പതിനഞ്ച്","പതിനാറ്","പതിനേഴ്","പതിനെട്ട്","പത്തൊൻപത്"];
+const TENS_ML = ["","","ഇരുപത്","മുപ്പത്","നാൽപത്","അമ്പത്","അറുപത്","എഴുപത്","എൺപത്","തൊണ്ണൂറ്"];
+
+function twoDigitsMl(n){
+  if(n < 20) return ONES_ML[n];
+  return TENS_ML[Math.floor(n/10)] + (n%10 ? " " + ONES_ML[n%10] : "");
+}
+function threeDigitsMl(n){
+  if(n < 100) return twoDigitsMl(n);
+  return ONES_ML[Math.floor(n/100)] + " നൂറ്" + (n%100 ? " " + twoDigitsMl(n%100) : "");
+}
+function amountToWordsMl(num){
+  num = Math.floor(Number(num) || 0);
+  if(num === 0) return "പൂജ്യം രൂപ മാത്രം";
+  let parts = [];
+  const crore = Math.floor(num / 10000000); num %= 10000000;
+  const lakh = Math.floor(num / 100000); num %= 100000;
+  const thousand = Math.floor(num / 1000); num %= 1000;
+  const rest = num;
+  if(crore) parts.push(threeDigitsMl(crore) + " കോടി");
+  if(lakh) parts.push(threeDigitsMl(lakh) + " ലക്ഷം");
+  if(thousand) parts.push(threeDigitsMl(thousand) + " ആയിരം");
+  if(rest) parts.push(threeDigitsMl(rest));
+  return parts.join(" ") + " രൂപ മാത്രം";
+}
+function amountToWordsLocalized(num){
+  return lang === 'ml' ? amountToWordsMl(num) : amountToWords(num);
 }
 
 function showToast(msg){
@@ -863,13 +898,13 @@ purposeSelect.addEventListener('change', ()=>{
   const item = PURPOSE_ITEMS.find(i => i.key === purposeSelect.value);
   if(item && item.amount){
     amountInput.value = item.amount;
-    document.getElementById('amountWords').textContent = amountToWords(item.amount);
+    document.getElementById('amountWords').textContent = amountToWordsLocalized(item.amount);
   }
 });
 
 amountInput.addEventListener('input', ()=>{
   const v = amountInput.value;
-  document.getElementById('amountWords').textContent = v ? amountToWords(v) : '';
+  document.getElementById('amountWords').textContent = v ? amountToWordsLocalized(v) : '';
 });
 
 document.getElementById('donationDate').value = todayStr();
@@ -961,7 +996,7 @@ function receiptHTML(r){
       ${r.donorAddress ? `<p><span class="label">${t('address_label')}</span><br><span class="val">${r.donorAddress}</span></p>` : ''}
       <div class="receipt-amount-box">
         <div class="figure">${inr(r.amount)}</div>
-        <div class="words">${amountToWords(r.amount)}</div>
+        <div class="words">${amountToWordsLocalized(r.amount)}</div>
       </div>
       <p><span class="label">${t('towards_label')}</span><br><span class="val">${displayPurpose}</span></p>
       <p><span class="label">${t('payment_mode_label')}</span><br><span class="val">${displayPaymentMode}</span></p>
