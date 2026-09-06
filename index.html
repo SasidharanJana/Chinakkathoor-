@@ -286,6 +286,18 @@
     cursor:pointer;
   }
   .install-btn:hover{background:var(--gold-light);}
+  .lang-toggle{
+    position:absolute; top:14px; right:14px;
+    display:flex; background:rgba(0,0,0,.22); border-radius:20px; padding:3px;
+    gap:2px;
+  }
+  .lang-btn{
+    background:transparent; border:none; cursor:pointer;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:11.5px;
+    color:var(--cream-dark); padding:6px 12px; border-radius:16px;
+    transition:all .15s ease;
+  }
+  .lang-btn.active{background:var(--gold); color:var(--maroon-dark);}
   .ios-hint{
     margin-top:12px;
     font-size:12px;
@@ -334,81 +346,75 @@
 <body>
 <div class="app">
   <header class="site">
-    <div class="eyebrow">Donation Register &amp; Receipt</div>
-    <h1>Sree Chinakkathoor Bhagavathi Temple</h1>
-    <div class="addr">Palappuram, Ottapalam, Kerala 679103</div>
+    <div class="lang-toggle" id="langToggle">
+      <button data-lang="en" class="lang-btn active">EN</button>
+      <button data-lang="ml" class="lang-btn">മലയാളം</button>
+    </div>
+    <div class="eyebrow" data-i18n="eyebrow">Donation Register &amp; Receipt</div>
+    <h1 data-i18n="temple_name">Sree Chinakkathoor Bhagavathi Temple</h1>
+    <div class="addr" data-i18n="temple_addr">Palappuram, Ottapalam, Kerala 679103</div>
     <div class="spire-divider">
       <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
-    <button id="installBtn" class="install-btn" style="display:none;">⬇ Install App</button>
-    <div id="iosInstallHint" class="ios-hint" style="display:none;">Tap <b>Share</b> then <b>"Add to Home Screen"</b> to install</div>
+    <button id="installBtn" class="install-btn" style="display:none;" data-i18n="install_btn">⬇ Install App</button>
+    <div id="iosInstallHint" class="ios-hint" style="display:none;" data-i18n-html="ios_hint">Tap <b>Share</b> then <b>"Add to Home Screen"</b> to install</div>
   </header>
 
   <nav class="tabs">
-    <button class="active" data-tab="new">＋ New Donation</button>
-    <button data-tab="ledger">Ledger</button>
-    <button data-tab="reports">Reports</button>
-    <button data-tab="settings">Settings</button>
+    <button class="active" data-tab="new" data-i18n="tab_new">＋ New Donation</button>
+    <button data-tab="ledger" data-i18n="tab_ledger">Ledger</button>
+    <button data-tab="reports" data-i18n="tab_reports">Reports</button>
+    <button data-tab="settings" data-i18n="tab_settings">Settings</button>
   </nav>
 
   <main>
     <!-- NEW DONATION -->
     <section id="tab-new">
       <div class="card">
-        <h2>Record a Donation</h2>
+        <h2 data-i18n="card_title_new">Record a Donation</h2>
         <form id="donationForm">
           <div class="grid">
             <div class="field">
-              <label for="donorName">Donor Name *</label>
-              <input type="text" id="donorName" required placeholder="Full name">
+              <label for="donorName" data-i18n="label_donor_name">Donor Name *</label>
+              <input type="text" id="donorName" required data-i18n-ph="placeholder_donor_name" placeholder="Full name">
             </div>
             <div class="field">
-              <label for="donorPhone">Phone Number</label>
-              <input type="tel" id="donorPhone" placeholder="10-digit mobile number">
+              <label for="donorPhone" data-i18n="label_donor_phone">Phone Number</label>
+              <input type="tel" id="donorPhone" data-i18n-ph="placeholder_donor_phone" placeholder="10-digit mobile number">
             </div>
           </div>
           <div class="field full">
-            <label for="donorAddress">Address</label>
-            <input type="text" id="donorAddress" placeholder="City / District (optional)">
+            <label for="donorAddress" data-i18n="label_donor_address">Address</label>
+            <input type="text" id="donorAddress" data-i18n-ph="placeholder_donor_address" placeholder="City / District (optional)">
           </div>
           <div class="grid">
             <div class="field">
-              <label for="amount">Amount (₹) *</label>
+              <label for="amount" data-i18n="label_amount">Amount (₹) *</label>
               <input type="number" id="amount" required min="1" step="1" placeholder="0">
               <div class="amount-words" id="amountWords"></div>
             </div>
             <div class="field">
-              <label for="paymentMode">Payment Mode *</label>
-              <select id="paymentMode" required>
-                <option value="UPI">UPI</option>
-                <option value="Card">Card</option>
-                <option value="Cash">Cash</option>
-              </select>
+              <label for="paymentMode" data-i18n="label_payment_mode">Payment Mode *</label>
+              <select id="paymentMode" required></select>
             </div>
           </div>
           <div class="grid">
             <div class="field">
-              <label for="purpose">Purpose *</label>
-              <select id="purpose" required>
-                <option value="General Donation">General Donation</option>
-                <option value="Vazhipadu">Vazhipadu</option>
-                <option value="Annadanam">Annadanam</option>
-                <option value="Festival Offering">Festival Offering</option>
-                <option value="Temple Renovation">Temple Renovation / Construction</option>
-                <option value="Other">Other (specify)</option>
-              </select>
+              <label for="purpose" data-i18n="label_purpose">Purpose *</label>
+              <select id="purpose" required></select>
+              <div class="amount-words" id="purposeHint" data-i18n="purpose_hint">Suggested rates for Chinakkathoor Pooram 2027</div>
             </div>
             <div class="field" id="otherPurposeWrap" style="display:none;">
-              <label for="otherPurpose">Specify Purpose</label>
-              <input type="text" id="otherPurpose" placeholder="e.g. Deepam sponsorship">
+              <label for="otherPurpose" data-i18n="label_other_purpose">Specify Purpose</label>
+              <input type="text" id="otherPurpose" data-i18n-ph="placeholder_other_purpose" placeholder="e.g. Deepam sponsorship">
             </div>
             <div class="field">
-              <label for="donationDate">Date *</label>
+              <label for="donationDate" data-i18n="label_date">Date *</label>
               <input type="date" id="donationDate" required>
             </div>
           </div>
           <div class="btn-row">
-            <button type="submit" class="btn btn-primary">Save &amp; Generate Receipt</button>
+            <button type="submit" class="btn btn-primary" data-i18n="btn_save_receipt">Save &amp; Generate Receipt</button>
           </div>
         </form>
       </div>
@@ -417,13 +423,13 @@
     <!-- LEDGER -->
     <section id="tab-ledger" style="display:none;">
       <div class="card">
-        <h2>Donation Ledger</h2>
+        <h2 data-i18n="card_title_ledger">Donation Ledger</h2>
         <div class="stats" id="stats"></div>
         <div class="ledger-controls">
-          <input type="text" id="searchBox" placeholder="Search by name or receipt no...">
+          <input type="text" id="searchBox" data-i18n-ph="placeholder_search" placeholder="Search by name or receipt no...">
           <input type="date" id="filterDate" title="Filter by date">
-          <button class="btn btn-ghost" id="clearFilters">Clear</button>
-          <button class="btn btn-gold" id="exportExcelBtn">⬇ Export to Excel</button>
+          <button class="btn btn-ghost" id="clearFilters" data-i18n="btn_clear">Clear</button>
+          <button class="btn btn-gold" id="exportExcelBtn" data-i18n="btn_export_excel">⬇ Export to Excel</button>
         </div>
         <div id="ledgerTableWrap"></div>
       </div>
@@ -432,7 +438,7 @@
     <!-- REPORTS -->
     <section id="tab-reports" style="display:none;">
       <div class="card">
-        <h2>Donation Reports</h2>
+        <h2 data-i18n="card_title_reports">Donation Reports</h2>
         <div class="ledger-controls">
           <select id="reportYear"></select>
         </div>
@@ -443,34 +449,34 @@
     <!-- SETTINGS -->
     <section id="tab-settings" style="display:none;">
       <div class="card">
-        <h2>Office Settings</h2>
+        <h2 data-i18n="card_title_settings">Office Settings</h2>
         <form id="settingsForm">
           <div class="grid">
             <div class="field">
-              <label for="secretaryName">Signatory Name</label>
+              <label for="secretaryName" data-i18n="label_signatory_name">Signatory Name</label>
               <input type="text" id="secretaryName" placeholder="e.g. Raman">
             </div>
             <div class="field">
-              <label for="secretaryDesignation">Designation</label>
+              <label for="secretaryDesignation" data-i18n="label_designation">Designation</label>
               <input type="text" id="secretaryDesignation" placeholder="e.g. Secretary">
             </div>
           </div>
           <div class="field full">
-            <label for="secretaryPhone">Contact Number</label>
+            <label for="secretaryPhone" data-i18n="label_contact_number">Contact Number</label>
             <input type="tel" id="secretaryPhone" placeholder="+91...">
           </div>
           <div class="grid">
             <div class="field">
-              <label for="panNumber">Temple PAN</label>
+              <label for="panNumber" data-i18n="label_temple_pan">Temple PAN</label>
               <input type="text" id="panNumber" placeholder="e.g. AAATC1234A">
             </div>
             <div class="field">
-              <label for="reg80g">80G Registration No.</label>
+              <label for="reg80g" data-i18n="label_80g">80G Registration No.</label>
               <input type="text" id="reg80g" placeholder="e.g. AAATC1234A/80G/2024">
             </div>
           </div>
           <div class="btn-row">
-            <button type="submit" class="btn btn-primary">Save Settings</button>
+            <button type="submit" class="btn btn-primary" data-i18n="btn_save_settings">Save Settings</button>
           </div>
         </form>
       </div>
@@ -484,9 +490,9 @@
     <button class="close-x" id="closeReceipt">&times;</button>
     <div class="receipt-print" id="receiptPrintArea"></div>
     <div class="receipt-actions">
-      <button class="btn btn-ghost" id="closeReceiptBtn">Close</button>
-      <button class="btn btn-gold" id="downloadPdfBtn">⬇ Download PDF</button>
-      <button class="btn btn-primary" id="printReceiptBtn">🖨 Print</button>
+      <button class="btn btn-ghost" id="closeReceiptBtn" data-i18n="btn_close">Close</button>
+      <button class="btn btn-gold" id="downloadPdfBtn" data-i18n="btn_download_pdf">⬇ Download PDF</button>
+      <button class="btn btn-primary" id="printReceiptBtn" data-i18n="btn_print">🖨 Print</button>
     </div>
   </div>
 </div>
@@ -500,6 +506,212 @@ const RECEIPT_PREFIX = "SCBT";
 const STORAGE_KEY = "donations-ledger";
 const COUNTER_KEY = "receipt-counter";
 const SETTINGS_KEY = "temple-settings";
+const LANG_KEY = "app-lang";
+
+// ---------- i18n ----------
+const I18N = {
+  en: {
+    eyebrow: "Donation Register & Receipt",
+    temple_name: "Sree Chinakkathoor Bhagavathi Temple",
+    temple_addr: "Palappuram, Ottapalam, Kerala 679103",
+    install_btn: "⬇ Install App",
+    ios_hint: 'Tap <b>Share</b> then <b>"Add to Home Screen"</b> to install',
+    tab_new: "＋ New Donation",
+    tab_ledger: "Ledger",
+    tab_reports: "Reports",
+    tab_settings: "Settings",
+    card_title_new: "Record a Donation",
+    label_donor_name: "Donor Name *",
+    placeholder_donor_name: "Full name",
+    label_donor_phone: "Phone Number",
+    placeholder_donor_phone: "10-digit mobile number",
+    label_donor_address: "Address",
+    placeholder_donor_address: "City / District (optional)",
+    label_amount: "Amount (₹) *",
+    label_payment_mode: "Payment Mode *",
+    label_purpose: "Purpose *",
+    purpose_hint: "Suggested rates for Chinakkathoor Pooram 2027",
+    label_other_purpose: "Specify Purpose",
+    placeholder_other_purpose: "e.g. Deepam sponsorship",
+    label_date: "Date *",
+    btn_save_receipt: "Save & Generate Receipt",
+    card_title_ledger: "Donation Ledger",
+    stat_today: "Today's Collection",
+    stat_records: "Records Shown",
+    stat_total_filtered: "Total (Filtered)",
+    placeholder_search: "Search by name or receipt no...",
+    btn_clear: "Clear",
+    btn_export_excel: "⬇ Export to Excel",
+    th_receipt_no: "Receipt No",
+    th_date: "Date",
+    th_donor: "Donor",
+    th_purpose: "Purpose",
+    th_mode: "Mode",
+    th_amount: "Amount",
+    btn_reprint: "Reprint",
+    empty_title: "No donations found",
+    empty_sub: "Try clearing filters, or record a new donation.",
+    card_title_reports: "Donation Reports",
+    stat_avg_donation: "Average Donation",
+    heading_month_wise: "Month-wise",
+    heading_by_purpose: "By Purpose",
+    th_month: "Month",
+    th_donations: "Donations",
+    th_total: "Total",
+    no_records: "No records",
+    card_title_settings: "Office Settings",
+    label_signatory_name: "Signatory Name",
+    label_designation: "Designation",
+    label_contact_number: "Contact Number",
+    label_temple_pan: "Temple PAN",
+    label_80g: "80G Registration No.",
+    btn_save_settings: "Save Settings",
+    receipt_no_label: "Receipt No:",
+    date_label: "Date:",
+    received_from: "Received with thanks from",
+    phone_label: "Phone",
+    address_label: "Address",
+    towards_label: "Towards",
+    payment_mode_label: "Payment Mode",
+    tax_note: "Eligible for tax deduction under Section 80G of the Income Tax Act, 1961.",
+    reg80g_label: "80G Reg. No:",
+    pan_label: "PAN:",
+    issued_by_note: "This receipt is issued by the temple office.",
+    contact_label: "Contact:",
+    authorised_signatory: "Authorised Signatory",
+    btn_close: "Close",
+    btn_download_pdf: "⬇ Download PDF",
+    btn_print: "🖨 Print",
+    generating: "Generating…",
+    toast_settings_saved: "Settings saved",
+    toast_pdf_lib_not_ready: "PDF library not ready — try again in a moment.",
+    toast_pdf_error: "Could not generate PDF — please try Print instead.",
+    toast_save_error: "Could not save — your browser storage may be full or disabled.",
+    toast_save_settings_error: "Could not save settings — your browser storage may be full or disabled.",
+    toast_excel_lib_not_ready: "Excel library not ready — try again in a moment.",
+    toast_no_records_export: "No records to export.",
+    toast_donation_saved: "Donation saved — receipt "
+  },
+  ml: {
+    eyebrow: "സംഭാവന രജിസ്റ്റർ & രസീത്",
+    temple_name: "ശ്രീ ചിനക്കത്തൂർ ഭഗവതി ക്ഷേത്രം",
+    temple_addr: "പാലപ്പുറം, ഒറ്റപ്പാലം, കേരളം 679103",
+    install_btn: "⬇ ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക",
+    ios_hint: 'ഇൻസ്റ്റാൾ ചെയ്യാൻ <b>Share</b> അമർത്തി <b>"Add to Home Screen"</b> തിരഞ്ഞെടുക്കുക',
+    tab_new: "＋ പുതിയ സംഭാവന",
+    tab_ledger: "ലെഡ്ജർ",
+    tab_reports: "റിപ്പോർട്ടുകൾ",
+    tab_settings: "ക്രമീകരണങ്ങൾ",
+    card_title_new: "സംഭാവന രേഖപ്പെടുത്തുക",
+    label_donor_name: "ദാതാവിന്റെ പേര് *",
+    placeholder_donor_name: "പൂർണ്ണ നാമം",
+    label_donor_phone: "ഫോൺ നമ്പർ",
+    placeholder_donor_phone: "10 അക്ക മൊബൈൽ നമ്പർ",
+    label_donor_address: "വിലാസം",
+    placeholder_donor_address: "നഗരം / ജില്ല (ഐച്ഛികം)",
+    label_amount: "തുക (₹) *",
+    label_payment_mode: "പണമടയ്ക്കൽ രീതി *",
+    label_purpose: "ആവശ്യം *",
+    purpose_hint: "ചിനക്കത്തൂർ പൂരം 2027-നുള്ള നിർദ്ദേശിത നിരക്കുകൾ",
+    label_other_purpose: "ആവശ്യം വ്യക്തമാക്കുക",
+    placeholder_other_purpose: "ഉദാ. ദീപം സ്പോൺസർഷിപ്പ്",
+    label_date: "തീയതി *",
+    btn_save_receipt: "സേവ് ചെയ്ത് രസീത് നിർമ്മിക്കുക",
+    card_title_ledger: "സംഭാവന ലെഡ്ജർ",
+    stat_today: "ഇന്നത്തെ സമാഹരണം",
+    stat_records: "കാണിച്ച രേഖകൾ",
+    stat_total_filtered: "ആകെ (ഫിൽട്ടർ ചെയ്തത്)",
+    placeholder_search: "പേര് അല്ലെങ്കിൽ രസീത് നമ്പർ പ്രകാരം തിരയുക...",
+    btn_clear: "മായ്ക്കുക",
+    btn_export_excel: "⬇ എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക",
+    th_receipt_no: "രസീത് നമ്പർ",
+    th_date: "തീയതി",
+    th_donor: "ദാതാവ്",
+    th_purpose: "ആവശ്യം",
+    th_mode: "രീതി",
+    th_amount: "തുക",
+    btn_reprint: "വീണ്ടും പ്രിന്റ്",
+    empty_title: "സംഭാവനകളൊന്നും കണ്ടെത്തിയില്ല",
+    empty_sub: "ഫിൽട്ടറുകൾ മായ്ക്കുക, അല്ലെങ്കിൽ പുതിയ സംഭാവന രേഖപ്പെടുത്തുക.",
+    card_title_reports: "സംഭാവന റിപ്പോർട്ടുകൾ",
+    stat_avg_donation: "ശരാശരി സംഭാവന",
+    heading_month_wise: "മാസം തിരിച്ച്",
+    heading_by_purpose: "ആവശ്യം അനുസരിച്ച്",
+    th_month: "മാസം",
+    th_donations: "സംഭാവനകൾ",
+    th_total: "ആകെ",
+    no_records: "രേഖകളൊന്നുമില്ല",
+    card_title_settings: "ഓഫീസ് ക്രമീകരണങ്ങൾ",
+    label_signatory_name: "ഒപ്പിടുന്നയാളുടെ പേര്",
+    label_designation: "പദവി",
+    label_contact_number: "ബന്ധപ്പെടേണ്ട നമ്പർ",
+    label_temple_pan: "ക്ഷേത്രത്തിന്റെ PAN",
+    label_80g: "80G രജിസ്ട്രേഷൻ നമ്പർ",
+    btn_save_settings: "ക്രമീകരണങ്ങൾ സേവ് ചെയ്യുക",
+    receipt_no_label: "രസീത് നമ്പർ:",
+    date_label: "തീയതി:",
+    received_from: "നന്ദിയോടെ സ്വീകരിച്ചത്",
+    phone_label: "ഫോൺ",
+    address_label: "വിലാസം",
+    towards_label: "ആവശ്യത്തിന്",
+    payment_mode_label: "പണമടയ്ക്കൽ രീതി",
+    tax_note: "ആദായനികുതി നിയമം 1961-ലെ സെക്ഷൻ 80G പ്രകാരം നികുതി ഇളവിന് അർഹത.",
+    reg80g_label: "80G രജി. നമ്പർ:",
+    pan_label: "PAN:",
+    issued_by_note: "ഈ രസീത് ക്ഷേത്ര ഓഫീസ് നൽകുന്നതാണ്.",
+    contact_label: "ബന്ധപ്പെടുക:",
+    authorised_signatory: "അധികാരപ്പെട്ട ഒപ്പ്",
+    btn_close: "അടയ്ക്കുക",
+    btn_download_pdf: "⬇ PDF ഡൗൺലോഡ് ചെയ്യുക",
+    btn_print: "🖨 പ്രിന്റ് ചെയ്യുക",
+    generating: "നിർമ്മിക്കുന്നു…",
+    toast_settings_saved: "ക്രമീകരണങ്ങൾ സേവ് ചെയ്തു",
+    toast_pdf_lib_not_ready: "PDF ലൈബ്രറി തയ്യാറായിട്ടില്ല — അൽപ്പം കഴിഞ്ഞ് ശ്രമിക്കുക.",
+    toast_pdf_error: "PDF നിർമ്മിക്കാൻ കഴിഞ്ഞില്ല — ദയവായി പ്രിന്റ് ഉപയോഗിക്കുക.",
+    toast_save_error: "സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല — ബ്രൗസർ സ്റ്റോറേജ് നിറഞ്ഞതോ പ്രവർത്തനരഹിതമോ ആകാം.",
+    toast_save_settings_error: "ക്രമീകരണങ്ങൾ സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല — ബ്രൗസർ സ്റ്റോറേജ് നിറഞ്ഞതോ പ്രവർത്തനരഹിതമോ ആകാം.",
+    toast_excel_lib_not_ready: "എക്സൽ ലൈബ്രറി തയ്യാറായിട്ടില്ല — അൽപ്പം കഴിഞ്ഞ് ശ്രമിക്കുക.",
+    toast_no_records_export: "എക്സ്പോർട്ട് ചെയ്യാൻ രേഖകളൊന്നുമില്ല.",
+    toast_donation_saved: "സംഭാവന സേവ് ചെയ്തു — രസീത് "
+  }
+};
+
+const MONTH_NAMES_I18N = {
+  en: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+  ml: ["ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മെയ്","ജൂൺ","ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ"]
+};
+
+// Chinakkathoor Pooram 2027 — donation categories with suggested amounts (₹)
+const PURPOSE_ITEMS = [
+  { key: "general",       en: "General Donation",                     ml: "പൊതു സംഭാവന",              amount: null },
+  { key: "aana",          en: "Elephant (Aana)",                      ml: "ആന",                        amount: 30001 },
+  { key: "pooram_food",   en: "Pooram Day Feast",                     ml: "പൂരം ദിവസത്തെ ഭക്ഷണം",       amount: 10001 },
+  { key: "aanachamayam",  en: "Elephant Decoration (Aanachamayam)",   ml: "ആനച്ചമയം",                   amount: 15001 },
+  { key: "thayambaka",    en: "Thayambaka",                           ml: "തായമ്പക",                    amount: 40001 },
+  { key: "desha_thayamb", en: "Deshakoothu Thayambaka",               ml: "ദേശക്കൂത്ത് തായമ്പക",         amount: 25001 },
+  { key: "deshakoothu",   en: "Deshakoothu",                          ml: "ദേശക്കൂത്ത്",                 amount: 3501 },
+  { key: "umbrellas",     en: "Special Umbrellas",                    ml: "സ്പെഷ്യൽ കുടകൾ",             amount: 7501 },
+  { key: "flowers",       en: "Flower Decoration",                    ml: "പുഷ്പാലങ്കാരം",              amount: 10001 },
+  { key: "panchavadyam",  en: "Panchavadyam",                         ml: "പഞ്ചവാദ്യം",                 amount: 25001 },
+  { key: "melam",         en: "Melam",                                ml: "മേളം",                       amount: 25001 },
+  { key: "panthal",       en: "Pandal",                               ml: "പന്തൽ",                      amount: 20001 },
+  { key: "main_contrib",  en: "Main Contributions",                   ml: "പ്രധാന സംഭാവനകൾ",           amount: 2001 },
+  { key: "oil",           en: "Oil (1 Tin)",                          ml: "എണ്ണ 1 ടിൻ",                 amount: 1401 },
+  { key: "rice",          en: "Rice (1 Para)",                        ml: "അരി 1 പറ",                   amount: 201 },
+  { key: "other",         en: "Other (specify)",                      ml: "മറ്റുള്ളവ (വ്യക്തമാക്കുക)",   amount: null }
+];
+
+const PAYMENT_MODES = [
+  { key: "UPI",  en: "UPI",  ml: "UPI" },
+  { key: "Card", en: "Card", ml: "കാർഡ്" },
+  { key: "Cash", en: "Cash", ml: "ക്യാഷ്" }
+];
+
+let lang = localStorage.getItem(LANG_KEY) || 'en';
+function t(key){
+  return (I18N[lang] && I18N[lang][key] !== undefined) ? I18N[lang][key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
+}
+function purposeLabel(item){ return lang === 'ml' ? item.ml : item.en; }
 
 let donations = [];
 let counter = { year: new Date().getFullYear(), seq: 0 };
@@ -589,12 +801,12 @@ async function loadData(){
 }
 async function saveSettings(){
   if(!storageSet(SETTINGS_KEY, settings)){
-    showToast("Could not save settings — your browser storage may be full or disabled.");
+    showToast(t('toast_save_settings_error'));
   }
 }
 async function saveDonations(){
   if(!storageSet(STORAGE_KEY, donations)){
-    showToast("Could not save — your browser storage may be full or disabled.");
+    showToast(t('toast_save_error'));
   }
 }
 async function saveCounter(){
@@ -627,11 +839,34 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
 // ---------- Form ----------
 const purposeSelect = document.getElementById('purpose');
 const otherWrap = document.getElementById('otherPurposeWrap');
+const paymentModeSelect = document.getElementById('paymentMode');
+const amountInput = document.getElementById('amount');
+
+function populatePurposeOptions(preserveKey){
+  const current = preserveKey || purposeSelect.value || 'general';
+  purposeSelect.innerHTML = PURPOSE_ITEMS.map(item =>
+    `<option value="${item.key}">${purposeLabel(item)}</option>`
+  ).join('');
+  purposeSelect.value = PURPOSE_ITEMS.some(i=>i.key===current) ? current : 'general';
+  otherWrap.style.display = purposeSelect.value === 'other' ? '' : 'none';
+}
+function populatePaymentModeOptions(preserveKey){
+  const current = preserveKey || paymentModeSelect.value || 'UPI';
+  paymentModeSelect.innerHTML = PAYMENT_MODES.map(item =>
+    `<option value="${item.key}">${purposeLabel(item)}</option>`
+  ).join('');
+  paymentModeSelect.value = PAYMENT_MODES.some(i=>i.key===current) ? current : 'UPI';
+}
+
 purposeSelect.addEventListener('change', ()=>{
-  otherWrap.style.display = purposeSelect.value === 'Other' ? '' : 'none';
+  otherWrap.style.display = purposeSelect.value === 'other' ? '' : 'none';
+  const item = PURPOSE_ITEMS.find(i => i.key === purposeSelect.value);
+  if(item && item.amount){
+    amountInput.value = item.amount;
+    document.getElementById('amountWords').textContent = amountToWords(item.amount);
+  }
 });
 
-const amountInput = document.getElementById('amount');
 amountInput.addEventListener('input', ()=>{
   const v = amountInput.value;
   document.getElementById('amountWords').textContent = v ? amountToWords(v) : '';
@@ -654,7 +889,7 @@ document.getElementById('settingsForm').addEventListener('submit', async (e)=>{
   settings.panNumber = document.getElementById('panNumber').value.trim();
   settings.reg80g = document.getElementById('reg80g').value.trim();
   await saveSettings();
-  showToast('Settings saved');
+  showToast(t('toast_settings_saved'));
 });
 
 document.getElementById('donationForm').addEventListener('submit', async (e)=>{
@@ -662,9 +897,16 @@ document.getElementById('donationForm').addEventListener('submit', async (e)=>{
   const submitBtn = e.target.querySelector('button[type=submit]');
   submitBtn.disabled = true;
 
-  const purposeVal = purposeSelect.value === 'Other'
-    ? (document.getElementById('otherPurpose').value.trim() || 'Other')
-    : purposeSelect.value;
+  const purposeItem = PURPOSE_ITEMS.find(i => i.key === purposeSelect.value);
+  let purposeEn, purposeMl;
+  if(purposeSelect.value === 'other'){
+    const customText = document.getElementById('otherPurpose').value.trim() || 'Other';
+    purposeEn = customText;
+    purposeMl = customText;
+  } else {
+    purposeEn = purposeItem ? purposeItem.en : purposeSelect.value;
+    purposeMl = purposeItem ? purposeItem.ml : purposeSelect.value;
+  }
 
   const record = {
     receiptNo: await nextReceiptNo(),
@@ -672,8 +914,9 @@ document.getElementById('donationForm').addEventListener('submit', async (e)=>{
     donorPhone: document.getElementById('donorPhone').value.trim(),
     donorAddress: document.getElementById('donorAddress').value.trim(),
     amount: Number(amountInput.value),
-    paymentMode: document.getElementById('paymentMode').value,
-    purpose: purposeVal,
+    paymentMode: paymentModeSelect.value,
+    purpose: purposeEn,
+    purposeMl: purposeMl,
     date: document.getElementById('donationDate').value,
     createdAt: new Date().toISOString()
   };
@@ -684,14 +927,18 @@ document.getElementById('donationForm').addEventListener('submit', async (e)=>{
   e.target.reset();
   document.getElementById('donationDate').value = todayStr();
   document.getElementById('amountWords').textContent = '';
-  otherWrap.style.display = 'none';
+  populatePurposeOptions('general');
+  populatePaymentModeOptions('UPI');
 
   showReceipt(record);
-  showToast('Donation saved — receipt ' + record.receiptNo);
+  showToast(t('toast_donation_saved') + record.receiptNo);
 });
 
 // ---------- Receipt ----------
 function receiptHTML(r){
+  const displayPurpose = (lang === 'ml' && r.purposeMl) ? r.purposeMl : r.purpose;
+  const paymentItem = PAYMENT_MODES.find(i => i.key === r.paymentMode);
+  const displayPaymentMode = paymentItem ? purposeLabel(paymentItem) : r.paymentMode;
   return `
     <div class="receipt-head">
       <svg class="om" width="26" height="26" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
@@ -701,33 +948,33 @@ function receiptHTML(r){
         </g>
         <circle cx="20" cy="6" r="2" fill="#7A1F2B"/>
       </svg>
-      <h3>${TEMPLE_NAME}</h3>
-      <div class="a2">${TEMPLE_ADDR}</div>
+      <h3>${t('temple_name')}</h3>
+      <div class="a2">${t('temple_addr')}</div>
     </div>
     <div class="receipt-meta">
-      <span>Receipt No: <b>${r.receiptNo}</b></span>
-      <span>Date: <b>${formatDateDisplay(r.date)}</b></span>
+      <span>${t('receipt_no_label')} <b>${r.receiptNo}</b></span>
+      <span>${t('date_label')} <b>${formatDateDisplay(r.date)}</b></span>
     </div>
     <div class="receipt-body">
-      <p><span class="label">Received with thanks from</span><br><span class="val">${r.donorName}</span></p>
-      ${r.donorPhone ? `<p><span class="label">Phone</span><br><span class="val">${r.donorPhone}</span></p>` : ''}
-      ${r.donorAddress ? `<p><span class="label">Address</span><br><span class="val">${r.donorAddress}</span></p>` : ''}
+      <p><span class="label">${t('received_from')}</span><br><span class="val">${r.donorName}</span></p>
+      ${r.donorPhone ? `<p><span class="label">${t('phone_label')}</span><br><span class="val">${r.donorPhone}</span></p>` : ''}
+      ${r.donorAddress ? `<p><span class="label">${t('address_label')}</span><br><span class="val">${r.donorAddress}</span></p>` : ''}
       <div class="receipt-amount-box">
         <div class="figure">${inr(r.amount)}</div>
         <div class="words">${amountToWords(r.amount)}</div>
       </div>
-      <p><span class="label">Towards</span><br><span class="val">${r.purpose}</span></p>
-      <p><span class="label">Payment Mode</span><br><span class="val">${r.paymentMode}</span></p>
+      <p><span class="label">${t('towards_label')}</span><br><span class="val">${displayPurpose}</span></p>
+      <p><span class="label">${t('payment_mode_label')}</span><br><span class="val">${displayPaymentMode}</span></p>
       ${settings.reg80g ? `
       <div style="margin-top:14px;padding:10px 12px;border:1px dashed var(--green);border-radius:6px;font-size:11.5px;color:var(--green);line-height:1.6;">
-        Eligible for tax deduction under <b>Section 80G</b> of the Income Tax Act, 1961.
-        ${settings.reg80g ? `<br>80G Reg. No: <b>${settings.reg80g}</b>` : ''}
-        ${settings.panNumber ? `&nbsp;&nbsp;|&nbsp;&nbsp;PAN: <b>${settings.panNumber}</b>` : ''}
+        ${t('tax_note')}
+        ${settings.reg80g ? `<br>${t('reg80g_label')} <b>${settings.reg80g}</b>` : ''}
+        ${settings.panNumber ? `&nbsp;&nbsp;|&nbsp;&nbsp;${t('pan_label')} <b>${settings.panNumber}</b>` : ''}
       </div>` : ''}
     </div>
     <div class="receipt-foot">
-      <div style="font-size:11px;color:var(--ink-soft);">This receipt is issued by the temple office.${settings.secretaryPhone ? '<br>Contact: '+settings.secretaryPhone : ''}</div>
-      <div class="sign-line">${settings.secretaryName || 'Authorised Signatory'}${settings.secretaryDesignation ? '<br>'+settings.secretaryDesignation : ''}</div>
+      <div style="font-size:11px;color:var(--ink-soft);">${t('issued_by_note')}${settings.secretaryPhone ? '<br>'+t('contact_label')+' '+settings.secretaryPhone : ''}</div>
+      <div class="sign-line">${settings.secretaryName || t('authorised_signatory')}${settings.secretaryDesignation ? '<br>'+settings.secretaryDesignation : ''}</div>
     </div>
   `;
 }
@@ -738,10 +985,10 @@ function showReceipt(r){
   document.getElementById('receiptOverlay').classList.add('show');
 }
 document.getElementById('downloadPdfBtn').addEventListener('click', async ()=>{
-  if(!currentReceipt || !window.jspdf || !window.html2canvas){ showToast('PDF library not ready — try again in a moment.'); return; }
+  if(!currentReceipt || !window.jspdf || !window.html2canvas){ showToast(t('toast_pdf_lib_not_ready')); return; }
   const btn = document.getElementById('downloadPdfBtn');
   const originalLabel = btn.textContent;
-  btn.textContent = 'Generating…';
+  btn.textContent = t('generating');
   btn.disabled = true;
   try{
     if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
@@ -762,7 +1009,7 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async ()=>{
     pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
     pdf.save('Receipt-' + currentReceipt.receiptNo.replace(/\//g,'-') + '.pdf');
   }catch(err){
-    showToast('Could not generate PDF — please try Print instead.');
+    showToast(t('toast_pdf_error'));
   }finally{
     btn.textContent = originalLabel;
     btn.disabled = false;
@@ -795,14 +1042,14 @@ function renderLedger(){
   const todayTotal = donations.filter(r=>r.date===todayStr()).reduce((s,r)=>s+Number(r.amount||0),0);
 
   document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="n">${inr(todayTotal)}</div><div class="l">Today's Collection</div></div>
-    <div class="stat"><div class="n">${rows.length}</div><div class="l">Records Shown</div></div>
-    <div class="stat"><div class="n">${inr(total)}</div><div class="l">Total (Filtered)</div></div>
+    <div class="stat"><div class="n">${inr(todayTotal)}</div><div class="l">${t('stat_today')}</div></div>
+    <div class="stat"><div class="n">${rows.length}</div><div class="l">${t('stat_records')}</div></div>
+    <div class="stat"><div class="n">${inr(total)}</div><div class="l">${t('stat_total_filtered')}</div></div>
   `;
 
   const wrap = document.getElementById('ledgerTableWrap');
   if(rows.length === 0){
-    wrap.innerHTML = `<div class="empty"><div class="big">No donations found</div>Try clearing filters, or record a new donation.</div>`;
+    wrap.innerHTML = `<div class="empty"><div class="big">${t('empty_title')}</div>${t('empty_sub')}</div>`;
     return;
   }
 
@@ -811,21 +1058,25 @@ function renderLedger(){
     <table>
       <thead>
         <tr>
-          <th>Receipt No</th><th>Date</th><th>Donor</th><th>Purpose</th><th>Mode</th><th>Amount</th><th></th>
+          <th>${t('th_receipt_no')}</th><th>${t('th_date')}</th><th>${t('th_donor')}</th><th>${t('th_purpose')}</th><th>${t('th_mode')}</th><th>${t('th_amount')}</th><th></th>
         </tr>
       </thead>
       <tbody>
-        ${rows.map((r,idx)=>`
+        ${rows.map((r,idx)=>{
+          const displayPurpose = (lang === 'ml' && r.purposeMl) ? r.purposeMl : r.purpose;
+          const paymentItem = PAYMENT_MODES.find(i => i.key === r.paymentMode);
+          const displayMode = paymentItem ? purposeLabel(paymentItem) : r.paymentMode;
+          return `
           <tr>
             <td>${r.receiptNo}</td>
             <td>${formatDateDisplay(r.date)}</td>
             <td>${r.donorName}</td>
-            <td>${r.purpose}</td>
-            <td><span class="pill">${r.paymentMode}</span></td>
+            <td>${displayPurpose}</td>
+            <td><span class="pill">${displayMode}</span></td>
             <td class="amt">${inr(r.amount)}</td>
-            <td><button class="link-btn" data-receipt="${r.receiptNo}">Reprint</button></td>
+            <td><button class="link-btn" data-receipt="${r.receiptNo}">${t('btn_reprint')}</button></td>
           </tr>
-        `).join('')}
+        `;}).join('')}
       </tbody>
     </table>
     </div>
@@ -848,8 +1099,6 @@ document.getElementById('clearFilters').addEventListener('click', ()=>{
 });
 
 // ---------- Reports ----------
-const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
 function populateReportYears(){
   const sel = document.getElementById('reportYear');
   const years = Array.from(new Set(donations.map(d => d.date.slice(0,4))));
@@ -868,6 +1117,7 @@ function renderReports(){
 function renderReportForYear(){
   const year = document.getElementById('reportYear').value;
   const yearRecords = donations.filter(d => d.date.slice(0,4) === year);
+  const monthNames = MONTH_NAMES_I18N[lang] || MONTH_NAMES_I18N.en;
 
   // Month-wise
   const monthly = Array(12).fill(0).map(()=>({count:0, total:0}));
@@ -879,17 +1129,17 @@ function renderReportForYear(){
   const yearTotal = monthly.reduce((s,m)=>s+m.total,0);
   const yearCount = monthly.reduce((s,m)=>s+m.count,0);
 
-  // Purpose-wise
+  // Purpose-wise (keyed by canonical English purpose, but remember the Malayalam label too)
   const byPurpose = {};
   yearRecords.forEach(r=>{
-    byPurpose[r.purpose] = byPurpose[r.purpose] || {count:0,total:0};
+    byPurpose[r.purpose] = byPurpose[r.purpose] || {count:0, total:0, ml:r.purposeMl || r.purpose};
     byPurpose[r.purpose].count += 1;
     byPurpose[r.purpose].total += Number(r.amount||0);
   });
 
   const monthRows = monthly.map((m,i)=>`
     <tr>
-      <td>${MONTH_NAMES[i]}</td>
+      <td>${monthNames[i]}</td>
       <td>${m.count}</td>
       <td class="amt">${inr(m.total)}</td>
     </tr>
@@ -897,30 +1147,33 @@ function renderReportForYear(){
 
   const purposeRows = Object.entries(byPurpose).sort((a,b)=>b[1].total-a[1].total).map(([p,v])=>`
     <tr>
-      <td>${p}</td>
+      <td>${lang === 'ml' ? v.ml : p}</td>
       <td>${v.count}</td>
       <td class="amt">${inr(v.total)}</td>
     </tr>
   `).join('');
 
+  const totalForYearLabel = lang === 'ml' ? `${year}-ലെ ആകെ` : `Total for ${year}`;
+  const donationsForYearLabel = lang === 'ml' ? `${year}-ലെ സംഭാവനകൾ` : `Donations for ${year}`;
+
   document.getElementById('reportContent').innerHTML = `
     <div class="stats">
-      <div class="stat"><div class="n">${inr(yearTotal)}</div><div class="l">Total for ${year}</div></div>
-      <div class="stat"><div class="n">${yearCount}</div><div class="l">Donations for ${year}</div></div>
-      <div class="stat"><div class="n">${yearCount ? inr(Math.round(yearTotal/yearCount)) : inr(0)}</div><div class="l">Average Donation</div></div>
+      <div class="stat"><div class="n">${inr(yearTotal)}</div><div class="l">${totalForYearLabel}</div></div>
+      <div class="stat"><div class="n">${yearCount}</div><div class="l">${donationsForYearLabel}</div></div>
+      <div class="stat"><div class="n">${yearCount ? inr(Math.round(yearTotal/yearCount)) : inr(0)}</div><div class="l">${t('stat_avg_donation')}</div></div>
     </div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:18px 0 10px;">Month-wise</h3>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:18px 0 10px;">${t('heading_month_wise')}</h3>
     <div class="table-scroll">
     <table>
-      <thead><tr><th>Month</th><th>Donations</th><th>Total</th></tr></thead>
-      <tbody>${monthRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
+      <thead><tr><th>${t('th_month')}</th><th>${t('th_donations')}</th><th>${t('th_total')}</th></tr></thead>
+      <tbody>${monthRows || `<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">${t('no_records')}</td></tr>`}</tbody>
     </table>
     </div>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:22px 0 10px;">By Purpose</h3>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--maroon-dark);margin:22px 0 10px;">${t('heading_by_purpose')}</h3>
     <div class="table-scroll">
     <table>
-      <thead><tr><th>Purpose</th><th>Donations</th><th>Total</th></tr></thead>
-      <tbody>${purposeRows || '<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">No records</td></tr>'}</tbody>
+      <thead><tr><th>${t('th_purpose')}</th><th>${t('th_donations')}</th><th>${t('th_total')}</th></tr></thead>
+      <tbody>${purposeRows || `<tr><td colspan="3" style="text-align:center;color:var(--ink-soft);">${t('no_records')}</td></tr>`}</tbody>
     </table>
     </div>
   `;
@@ -929,7 +1182,7 @@ document.getElementById('reportYear').addEventListener('change', renderReportFor
 
 // ---------- Excel Export ----------
 document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
-  if(!window.XLSX){ showToast('Excel library not ready — try again in a moment.'); return; }
+  if(!window.XLSX){ showToast(t('toast_excel_lib_not_ready')); return; }
   const search = document.getElementById('searchBox').value.trim().toLowerCase();
   const filterDate = document.getElementById('filterDate').value;
   let rows = donations.filter(r=>{
@@ -937,7 +1190,7 @@ document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
     const matchesDate = !filterDate || r.date === filterDate;
     return matchesSearch && matchesDate;
   });
-  if(rows.length === 0){ showToast('No records to export.'); return; }
+  if(rows.length === 0){ showToast(t('toast_no_records_export')); return; }
 
   const sheetData = rows.map(r => ({
     "Receipt No": r.receiptNo,
@@ -999,9 +1252,53 @@ if('serviceWorker' in navigator){
   });
 }
 
+// ---------- Language engine ----------
+function applyStaticI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.placeholder = t(el.dataset.i18nPh);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+function applyLanguage(newLang){
+  lang = newLang;
+  localStorage.setItem(LANG_KEY, lang);
+  applyStaticI18n();
+  populatePurposeOptions();
+  populatePaymentModeOptions();
+
+  // Re-render whichever tab is currently visible, so already-displayed
+  // content (ledger rows, reports) switches language immediately too.
+  if(document.getElementById('tab-ledger').style.display !== 'none') renderLedger();
+  if(document.getElementById('tab-reports').style.display !== 'none') renderReportForYear();
+
+  // If a receipt is currently open, regenerate it in the new language.
+  if(currentReceipt && document.getElementById('receiptOverlay').classList.contains('show')){
+    document.getElementById('receiptPrintArea').innerHTML = receiptHTML(currentReceipt);
+  }
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(btn.dataset.lang !== lang) applyLanguage(btn.dataset.lang);
+  });
+});
+
 // ---------- Init ----------
 (async function init(){
   await loadData();
+  applyStaticI18n();
+  populatePurposeOptions();
+  populatePaymentModeOptions();
   renderLedger();
 })();
 </script>
